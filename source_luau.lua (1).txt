@@ -3657,41 +3657,40 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		MiniTrigger.Parent = ButtonFrame
 		MiniTrigger.AnchorPoint = Vector2.new(1, 0.5)
 		MiniTrigger.Position = UDim2.new(1, -8, 0.5, 0)
-		MiniTrigger.Size = UDim2.new(0, 16, 0, 16)
-		MiniTrigger.BackgroundColor3 = Color3.fromRGB(45, 48, 60)
-		MiniTrigger.BackgroundTransparency = 0.35
+		MiniTrigger.Size = UDim2.new(0, 14, 0, 14)
+		MiniTrigger.BackgroundTransparency = 1
 		MiniTrigger.BorderSizePixel = 0
 		MiniTrigger.ZIndex = LayerIndex + 12
 		MiniTrigger.FontFace = NeverLose.BuiltInBold
 		MiniTrigger.Text = "dots-vertical"
 		MiniTrigger.TextColor3 = Color3.fromRGB(255, 255, 255)
-		MiniTrigger.TextTransparency = 0.30
+		MiniTrigger.TextTransparency = 0.60
 		MiniTrigger.TextSize = 11
 		MiniTrigger.TextWrapped = true
 		local MiniTriggerCorner = Instance.new("UICorner")
-		MiniTriggerCorner.CornerRadius = UDim.new(0, 5)
+		MiniTriggerCorner.CornerRadius = UDim.new(0, 4)
 		MiniTriggerCorner.Parent = MiniTrigger
 
 		-- ── Popup window ─────────────────────────────────────────────────────
 		local PopupOpen = false
-		local FloatBtn = nil  -- referência ao botão flutuante criado
+		local FloatBtn = nil
 
 		local PopupFrame = Instance.new("Frame")
 		PopupFrame.Name = NeverLose.RandomString()
 		PopupFrame.Parent = NeverLose.ScreenGui
-		PopupFrame.BackgroundColor3 = Color3.fromRGB(20, 22, 27)
+		PopupFrame.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
 		PopupFrame.BackgroundTransparency = 1
 		PopupFrame.BorderSizePixel = 0
 		PopupFrame.ClipsDescendants = true
-		PopupFrame.Size = UDim2.new(0, 200, 0, 0)
+		PopupFrame.Size = UDim2.new(0, 185, 0, 0)
 		PopupFrame.ZIndex = LayerIndex + 30
 		PopupFrame.Visible = false
 		local PopupCorner = Instance.new("UICorner")
-		PopupCorner.CornerRadius = UDim.new(0, 10)
+		PopupCorner.CornerRadius = UDim.new(0, 8)
 		PopupCorner.Parent = PopupFrame
 		local PopupStroke = Instance.new("UIStroke")
 		PopupStroke.Color = Color3.fromRGB(45, 48, 58)
-		PopupStroke.Transparency = 0.65
+		PopupStroke.Transparency = 1
 		PopupStroke.Parent = PopupFrame
 		local PopupList = Instance.new("UIListLayout")
 		PopupList.Parent = PopupFrame
@@ -3699,35 +3698,33 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		PopupList.SortOrder = Enum.SortOrder.LayoutOrder
 		PopupList.Padding = UDim.new(0, 0)
 
-		-- helper: resize popup to content
 		local function ResizePopup()
 			NeverLose.PlayAnimate(PopupFrame, SlowyTween, {
-				Size = UDim2.new(0, 200, 0, PopupList.AbsoluteContentSize.Y + 4)
+				Size = UDim2.new(0, 185, 0, PopupList.AbsoluteContentSize.Y + 6)
 			})
 		end
 		NeverLose:AddSignal(PopupList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(LPH_NO_VIRTUALIZE(ResizePopup)))
 
-		-- helper: reposition popup near the trigger button
 		local function RepositionPopup()
 			local abs = MiniTrigger.AbsolutePosition
 			local sz  = MiniTrigger.AbsoluteSize
 			if NeverLose:MoreThanHalfY(abs.Y + 80) then
 				PopupFrame.AnchorPoint = Vector2.new(1, 1)
-				PopupFrame.Position    = UDim2.fromOffset(abs.X + sz.X, abs.Y)
+				PopupFrame.Position    = UDim2.fromOffset(abs.X + sz.X, abs.Y - 2)
 			else
 				PopupFrame.AnchorPoint = Vector2.new(1, 0)
-				PopupFrame.Position    = UDim2.fromOffset(abs.X + sz.X, abs.Y + sz.Y + 4)
+				PopupFrame.Position    = UDim2.fromOffset(abs.X + sz.X, abs.Y + sz.Y + 6)
 			end
 		end
 
-		-- helper: create a row inside popup
-		local function MakePopupRow(labelText, ySize)
+		-- helper: small row with left label
+		local function MakeRow(labelText, h)
 			local row = Instance.new("Frame")
 			row.Name = NeverLose.RandomString()
 			row.Parent = PopupFrame
 			row.BackgroundTransparency = 1
 			row.BorderSizePixel = 0
-			row.Size = UDim2.new(1, 0, 0, ySize or 28)
+			row.Size = UDim2.new(1, 0, 0, h or 26)
 			row.ZIndex = LayerIndex + 31
 			local lbl = Instance.new("TextLabel")
 			lbl.Name = NeverLose.RandomString()
@@ -3740,74 +3737,78 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 			lbl.Font = Enum.Font.GothamMedium
 			lbl.Text = labelText
 			lbl.TextColor3 = Color3.fromRGB(200, 200, 200)
-			lbl.TextSize = 11
-			lbl.TextTransparency = 0.20
+			lbl.TextSize = 10
+			lbl.TextTransparency = 0.35
 			lbl.TextXAlignment = Enum.TextXAlignment.Left
 			lbl.TextWrapped = false
 			return row, lbl
 		end
 
-		-- helper: section divider
 		local function MakeDivider()
 			local d = Instance.new("Frame")
 			d.Name = NeverLose.RandomString()
 			d.Parent = PopupFrame
 			d.BackgroundColor3 = Color3.fromRGB(45, 48, 58)
-			d.BackgroundTransparency = 0.65
+			d.BackgroundTransparency = 0.60
 			d.BorderSizePixel = 0
-			d.Size = UDim2.new(1, -16, 0, 1)
+			d.Size = UDim2.new(1, -20, 0, 1)
 			d.ZIndex = LayerIndex + 31
-			local pad = Instance.new("UIPadding")
-			pad.PaddingLeft = UDim.new(0, 8)
-			pad.Parent = d
 		end
 
-		-- ── Section header: KEYBIND ───────────────────────────────────────────
-		local hdrKeybind, _ = MakePopupRow("  keybind", 22)
-		local hdrLblKB = hdrKeybind:FindFirstChildOfClass("TextLabel")
-		hdrLblKB.TextColor3 = NeverLose.AccentColor
-		hdrLblKB.TextSize = 10
-		hdrLblKB.TextTransparency = 0.10
+		-- top padding
+		local topPad = Instance.new("Frame")
+		topPad.Name = NeverLose.RandomString()
+		topPad.Parent = PopupFrame
+		topPad.BackgroundTransparency = 1
+		topPad.BorderSizePixel = 0
+		topPad.Size = UDim2.new(1, 0, 0, 4)
+		topPad.ZIndex = LayerIndex + 31
 
-		-- Keybind display/pick row
-		local kbRowFrame = Instance.new("Frame")
-		kbRowFrame.Name = NeverLose.RandomString()
-		kbRowFrame.Parent = PopupFrame
-		kbRowFrame.BackgroundTransparency = 1
-		kbRowFrame.BorderSizePixel = 0
-		kbRowFrame.Size = UDim2.new(1, 0, 0, 26)
-		kbRowFrame.ZIndex = LayerIndex + 31
+		-- ── KEYBIND section ───────────────────────────────────────────────────
+		local kbHeaderRow, kbHeaderLbl = MakeRow("KEYBIND", 20)
+		kbHeaderLbl.TextColor3 = NeverLose.AccentColor
+		kbHeaderLbl.TextTransparency = 0.25
+		kbHeaderLbl.TextSize = 9
 
-		local kbPadLbl = Instance.new("TextLabel")
-		kbPadLbl.Parent = kbRowFrame
-		kbPadLbl.BackgroundTransparency = 1
-		kbPadLbl.Position = UDim2.new(0, 10, 0.5, 0)
-		kbPadLbl.AnchorPoint = Vector2.new(0, 0.5)
-		kbPadLbl.Size = UDim2.new(0, 80, 0, 14)
-		kbPadLbl.ZIndex = LayerIndex + 32
-		kbPadLbl.Font = Enum.Font.GothamMedium
-		kbPadLbl.Text = "Tecla ativa:"
-		kbPadLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
-		kbPadLbl.TextSize = 10
-		kbPadLbl.TextTransparency = 0.30
-		kbPadLbl.TextXAlignment = Enum.TextXAlignment.Left
+		local kbRow = Instance.new("Frame")
+		kbRow.Name = NeverLose.RandomString()
+		kbRow.Parent = PopupFrame
+		kbRow.BackgroundTransparency = 1
+		kbRow.BorderSizePixel = 0
+		kbRow.Size = UDim2.new(1, 0, 0, 26)
+		kbRow.ZIndex = LayerIndex + 31
+
+		local kbDescLbl = Instance.new("TextLabel")
+		kbDescLbl.Parent = kbRow
+		kbDescLbl.BackgroundTransparency = 1
+		kbDescLbl.Position = UDim2.new(0, 10, 0.5, 0)
+		kbDescLbl.AnchorPoint = Vector2.new(0, 0.5)
+		kbDescLbl.Size = UDim2.new(0, 70, 0, 14)
+		kbDescLbl.ZIndex = LayerIndex + 32
+		kbDescLbl.Font = Enum.Font.GothamMedium
+		kbDescLbl.Text = "Tecla ativa"
+		kbDescLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+		kbDescLbl.TextSize = 10
+		kbDescLbl.TextTransparency = 0.40
+		kbDescLbl.TextXAlignment = Enum.TextXAlignment.Left
 
 		local kbBadge = Instance.new("Frame")
 		kbBadge.Name = NeverLose.RandomString()
-		kbBadge.Parent = kbRowFrame
+		kbBadge.Parent = kbRow
 		kbBadge.AnchorPoint = Vector2.new(1, 0.5)
 		kbBadge.Position = UDim2.new(1, -10, 0.5, 0)
 		kbBadge.BackgroundColor3 = Color3.fromRGB(26, 28, 36)
+		kbBadge.BackgroundTransparency = 0.10
 		kbBadge.BorderSizePixel = 0
-		kbBadge.Size = UDim2.new(0, 45, 0, 18)
+		kbBadge.Size = UDim2.new(0, 40, 0, 16)
 		kbBadge.ZIndex = LayerIndex + 32
 		kbBadge.ClipsDescendants = true
-		local kbBadgeCorner = Instance.new("UICorner")
-		kbBadgeCorner.CornerRadius = UDim.new(0, 4)
-		kbBadgeCorner.Parent = kbBadge
+		local kbBadgeC = Instance.new("UICorner")
+		kbBadgeC.CornerRadius = UDim.new(0, 4)
+		kbBadgeC.Parent = kbBadge
 		local kbBadgeStroke = Instance.new("UIStroke")
 		kbBadgeStroke.Color = Color3.fromRGB(45, 48, 58)
-		kbBadgeStroke.Transparency = 0.65
+		kbBadgeStroke.Transparency = 0.55
 		kbBadgeStroke.Parent = kbBadge
 		local kbBadgeLbl = Instance.new("TextLabel")
 		kbBadgeLbl.Parent = kbBadge
@@ -3819,8 +3820,8 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		kbBadgeLbl.ZIndex = LayerIndex + 33
 		kbBadgeLbl.Font = Enum.Font.GothamMedium
 		kbBadgeLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-		kbBadgeLbl.TextSize = 10
-		kbBadgeLbl.TextTransparency = 0.45
+		kbBadgeLbl.TextSize = 9
+		kbBadgeLbl.TextTransparency = 0.40
 		kbBadgeLbl.Text = "None"
 
 		Button.KeybindValue = nil
@@ -3829,8 +3830,8 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		local function UpdateKbBadge(v)
 			local txt = v and NeverLose:KeyCodeToStr(v) or "None"
 			kbBadgeLbl.Text = txt
-			local sz = TextService:GetTextSize(txt, 10, Enum.Font.GothamMedium, Vector2.new(math.huge, math.huge))
-			kbBadge.Size = UDim2.new(0, sz.X + 10, 0, 18)
+			local sz = TextService:GetTextSize(txt, 9, Enum.Font.GothamMedium, Vector2.new(math.huge, math.huge))
+			kbBadge.Size = UDim2.new(0, sz.X + 12, 0, 16)
 		end
 
 		NeverLose:CreateInput(kbBadge, LPH_NO_VIRTUALIZE(function()
@@ -3852,7 +3853,6 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 			local KeyName = typeof(Selected) == "string" and Selected or Selected.Name
 			Button.KeybindValue = KeyName
 			UpdateKbBadge(KeyName)
-			-- wire the keybind to trigger the button callback
 			NeverLose:AddSignal(UserInputService.InputBegan:Connect(LPH_NO_VIRTUALIZE(function(inp, gp)
 				if gp then return end
 				if typeof(Button.KeybindValue) == "string" then
@@ -3867,61 +3867,57 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 			NeverLose.PlayAnimate(kbBadge, SlowyTween, { BackgroundTransparency = 0 })
 		end)))
 		NeverLose:AddSignal(kbBadge.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
-			NeverLose.PlayAnimate(kbBadge, SlowyTween, { BackgroundTransparency = 0 })
+			NeverLose.PlayAnimate(kbBadge, SlowyTween, { BackgroundTransparency = 0.10 })
 		end)))
 
-		-- ── Divider ───────────────────────────────────────────────────────────
 		MakeDivider()
 
-		-- ── Section header: BOTÃO FLUTUANTE ───────────────────────────────────
-		local hdrFloat, _ = MakePopupRow("  botão flutuante", 22)
-		local hdrLblFL = hdrFloat:FindFirstChildOfClass("TextLabel")
-		hdrLblFL.TextColor3 = NeverLose.AccentColor
-		hdrLblFL.TextSize = 10
-		hdrLblFL.TextTransparency = 0.10
+		-- ── BOTÃO FLUTUANTE section ────────────────────────────────────────────
+		local fbHeaderRow, fbHeaderLbl = MakeRow("BOTÃO FLUTUANTE", 20)
+		fbHeaderLbl.TextColor3 = NeverLose.AccentColor
+		fbHeaderLbl.TextTransparency = 0.25
+		fbHeaderLbl.TextSize = 9
 
-		-- Floating button size row (slider-like: - / + buttons)
-		local fbSizeValue = 50  -- default px size
-		local fbColorValue = Color3.fromRGB(78, 127, 252)  -- default = AccentColor
+		local fbSizeValue = 46
 
+		-- Size row: − valor +
 		local fbSizeRow = Instance.new("Frame")
 		fbSizeRow.Name = NeverLose.RandomString()
 		fbSizeRow.Parent = PopupFrame
 		fbSizeRow.BackgroundTransparency = 1
 		fbSizeRow.BorderSizePixel = 0
-		fbSizeRow.Size = UDim2.new(1, 0, 0, 28)
+		fbSizeRow.Size = UDim2.new(1, 0, 0, 26)
 		fbSizeRow.ZIndex = LayerIndex + 31
 
-		local fbSizeLbl = Instance.new("TextLabel")
-		fbSizeLbl.Parent = fbSizeRow
-		fbSizeLbl.BackgroundTransparency = 1
-		fbSizeLbl.Position = UDim2.new(0, 10, 0.5, 0)
-		fbSizeLbl.AnchorPoint = Vector2.new(0, 0.5)
-		fbSizeLbl.Size = UDim2.new(0, 60, 0, 14)
-		fbSizeLbl.ZIndex = LayerIndex + 32
-		fbSizeLbl.Font = Enum.Font.GothamMedium
-		fbSizeLbl.Text = "Tamanho:"
-		fbSizeLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
-		fbSizeLbl.TextSize = 10
-		fbSizeLbl.TextTransparency = 0.30
-		fbSizeLbl.TextXAlignment = Enum.TextXAlignment.Left
+		local fbSizeDescLbl = Instance.new("TextLabel")
+		fbSizeDescLbl.Parent = fbSizeRow
+		fbSizeDescLbl.BackgroundTransparency = 1
+		fbSizeDescLbl.Position = UDim2.new(0, 10, 0.5, 0)
+		fbSizeDescLbl.AnchorPoint = Vector2.new(0, 0.5)
+		fbSizeDescLbl.Size = UDim2.new(0, 60, 0, 14)
+		fbSizeDescLbl.ZIndex = LayerIndex + 32
+		fbSizeDescLbl.Font = Enum.Font.GothamMedium
+		fbSizeDescLbl.Text = "Tamanho"
+		fbSizeDescLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
+		fbSizeDescLbl.TextSize = 10
+		fbSizeDescLbl.TextTransparency = 0.40
+		fbSizeDescLbl.TextXAlignment = Enum.TextXAlignment.Left
 
-		-- Plus button
-		local function MakeStepBtn(lbl, posX)
+		local function MakeStepBtn(iconName, anchorX, offX)
 			local btn = Instance.new("TextLabel")
 			btn.Parent = fbSizeRow
-			btn.AnchorPoint = Vector2.new(1, 0.5)
-			btn.Position = UDim2.new(1, posX, 0.5, 0)
-			btn.Size = UDim2.new(0, 18, 0, 18)
-			btn.BackgroundColor3 = Color3.fromRGB(40, 43, 55)
-			btn.BackgroundTransparency = 0.20
+			btn.AnchorPoint = Vector2.new(anchorX, 0.5)
+			btn.Position = UDim2.new(anchorX, offX, 0.5, 0)
+			btn.Size = UDim2.new(0, 16, 0, 16)
+			btn.BackgroundColor3 = Color3.fromRGB(30, 32, 42)
+			btn.BackgroundTransparency = 0.30
 			btn.BorderSizePixel = 0
 			btn.ZIndex = LayerIndex + 32
 			btn.FontFace = NeverLose.BuiltInBold
-			btn.Text = lbl
+			btn.Text = iconName
 			btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-			btn.TextTransparency = 0.20
-			btn.TextSize = 12
+			btn.TextTransparency = 0.35
+			btn.TextSize = 10
 			local c = Instance.new("UICorner")
 			c.CornerRadius = UDim.new(0, 4)
 			c.Parent = btn
@@ -3931,165 +3927,84 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		local fbSizeValLbl = Instance.new("TextLabel")
 		fbSizeValLbl.Parent = fbSizeRow
 		fbSizeValLbl.AnchorPoint = Vector2.new(1, 0.5)
-		fbSizeValLbl.Position = UDim2.new(1, -47, 0.5, 0)
-		fbSizeValLbl.Size = UDim2.new(0, 26, 0, 14)
+		fbSizeValLbl.Position = UDim2.new(1, -30, 0.5, 0)
+		fbSizeValLbl.Size = UDim2.new(0, 22, 0, 14)
 		fbSizeValLbl.BackgroundTransparency = 1
 		fbSizeValLbl.BorderSizePixel = 0
 		fbSizeValLbl.ZIndex = LayerIndex + 32
 		fbSizeValLbl.Font = Enum.Font.GothamMedium
 		fbSizeValLbl.Text = tostring(fbSizeValue)
-		fbSizeValLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+		fbSizeValLbl.TextColor3 = Color3.fromRGB(220, 220, 220)
 		fbSizeValLbl.TextSize = 10
-		fbSizeValLbl.TextTransparency = 0.20
+		fbSizeValLbl.TextTransparency = 0.25
 		fbSizeValLbl.TextXAlignment = Enum.TextXAlignment.Center
 
-		local btnMinus = MakeStepBtn("minus", -10)
-		local btnPlus  = MakeStepBtn("plus", -10 - 18 - 26)
-
-		-- fix positions: [+] far right, value mid, [-] left of +
-		btnPlus.Position  = UDim2.new(1, -10, 0.5, 0)
-		btnMinus.Position = UDim2.new(1, -10 - 18 - 3, 0.5, 0)
-		fbSizeValLbl.Position = UDim2.new(1, -10 - 18 - 3 - 18 - 3, 0.5, 0)
+		local btnPlus  = MakeStepBtn("plus",  1, -10)
+		local btnMinus = MakeStepBtn("minus", 1, -10 - 16 - 22 - 2)
 
 		local function UpdateFloatBtn()
 			if FloatBtn and FloatBtn.Instance and FloatBtn.Instance.Parent then
 				NeverLose.PlayAnimate(FloatBtn.Instance, SlowyTween, {
 					Size = UDim2.new(0, fbSizeValue, 0, fbSizeValue),
-					BackgroundColor3 = fbColorValue,
 				})
 			end
 		end
 
 		NeverLose:CreateInput(btnPlus, LPH_NO_VIRTUALIZE(function()
-			fbSizeValue = math.clamp(fbSizeValue + 5, 20, 100)
+			fbSizeValue = math.clamp(fbSizeValue + 4, 24, 96)
 			fbSizeValLbl.Text = tostring(fbSizeValue)
 			UpdateFloatBtn()
 		end))
 		NeverLose:CreateInput(btnMinus, LPH_NO_VIRTUALIZE(function()
-			fbSizeValue = math.clamp(fbSizeValue - 5, 20, 100)
+			fbSizeValue = math.clamp(fbSizeValue - 4, 24, 96)
 			fbSizeValLbl.Text = tostring(fbSizeValue)
 			UpdateFloatBtn()
 		end))
 
-		-- Color row
-		local fbColorRow = Instance.new("Frame")
-		fbColorRow.Name = NeverLose.RandomString()
-		fbColorRow.Parent = PopupFrame
-		fbColorRow.BackgroundTransparency = 1
-		fbColorRow.BorderSizePixel = 0
-		fbColorRow.Size = UDim2.new(1, 0, 0, 28)
-		fbColorRow.ZIndex = LayerIndex + 31
-
-		local fbColorLbl = Instance.new("TextLabel")
-		fbColorLbl.Parent = fbColorRow
-		fbColorLbl.BackgroundTransparency = 1
-		fbColorLbl.Position = UDim2.new(0, 10, 0.5, 0)
-		fbColorLbl.AnchorPoint = Vector2.new(0, 0.5)
-		fbColorLbl.Size = UDim2.new(0, 60, 0, 14)
-		fbColorLbl.ZIndex = LayerIndex + 32
-		fbColorLbl.Font = Enum.Font.GothamMedium
-		fbColorLbl.Text = "Cor:"
-		fbColorLbl.TextColor3 = Color3.fromRGB(180, 180, 180)
-		fbColorLbl.TextSize = 10
-		fbColorLbl.TextTransparency = 0.30
-		fbColorLbl.TextXAlignment = Enum.TextXAlignment.Left
-
-		local fbColorPreview = Instance.new("Frame")
-		fbColorPreview.Name = NeverLose.RandomString()
-		fbColorPreview.Parent = fbColorRow
-		fbColorPreview.AnchorPoint = Vector2.new(1, 0.5)
-		fbColorPreview.Position = UDim2.new(1, -10, 0.5, 0)
-		fbColorPreview.Size = UDim2.new(0, 18, 0, 18)
-		fbColorPreview.BackgroundColor3 = fbColorValue
-		fbColorPreview.BorderSizePixel = 0
-		fbColorPreview.ZIndex = LayerIndex + 32
-		local fbColorPreviewCorner = Instance.new("UICorner")
-		fbColorPreviewCorner.CornerRadius = UDim.new(0, 4)
-		fbColorPreviewCorner.Parent = fbColorPreview
-
-		-- small colour palette: 6 preset swatches
-		local Swatches = {
-			Color3.fromRGB(78,127,252),
-			Color3.fromRGB(252, 78, 78),
-			Color3.fromRGB(78, 200, 130),
-			Color3.fromRGB(220, 180, 50),
-			Color3.fromRGB(180, 80, 220),
-			Color3.fromRGB(220, 220, 220),
-		}
-		local swatchRow = Instance.new("Frame")
-		swatchRow.Name = NeverLose.RandomString()
-		swatchRow.Parent = PopupFrame
-		swatchRow.BackgroundTransparency = 1
-		swatchRow.BorderSizePixel = 0
-		swatchRow.Size = UDim2.new(1, 0, 0, 28)
-		swatchRow.ZIndex = LayerIndex + 31
-		local swatchList = Instance.new("UIListLayout")
-		swatchList.Parent = swatchRow
-		swatchList.FillDirection = Enum.FillDirection.Horizontal
-		swatchList.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		swatchList.VerticalAlignment = Enum.VerticalAlignment.Center
-		swatchList.Padding = UDim.new(0, 4)
-		swatchList.SortOrder = Enum.SortOrder.LayoutOrder
-		for _, col in ipairs(Swatches) do
-			local sw = Instance.new("Frame")
-			sw.Parent = swatchRow
-			sw.Size = UDim2.new(0, 18, 0, 18)
-			sw.BackgroundColor3 = col
-			sw.BorderSizePixel = 0
-			sw.ZIndex = LayerIndex + 32
-			local swc = Instance.new("UICorner")
-			swc.CornerRadius = UDim.new(0, 4)
-			swc.Parent = sw
-			local capturedCol = col
-			NeverLose:CreateInput(sw, LPH_NO_VIRTUALIZE(function()
-				fbColorValue = capturedCol
-				fbColorPreview.BackgroundColor3 = capturedCol
-				UpdateFloatBtn()
-			end))
-			NeverLose:AddSignal(sw.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
-				NeverLose.PlayAnimate(sw, SlowyTween, { Size = UDim2.new(0, 20, 0, 20) })
+		for _, stepBtn in ipairs({btnPlus, btnMinus}) do
+			NeverLose:AddSignal(stepBtn.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
+				NeverLose.PlayAnimate(stepBtn, SlowyTween, { BackgroundTransparency = 0.05 })
 			end)))
-			NeverLose:AddSignal(sw.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
-				NeverLose.PlayAnimate(sw, SlowyTween, { Size = UDim2.new(0, 18, 0, 18) })
+			NeverLose:AddSignal(stepBtn.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
+				NeverLose.PlayAnimate(stepBtn, SlowyTween, { BackgroundTransparency = 0.30 })
 			end)))
 		end
 
-		-- "Criar / Remover botão flutuante" toggle row
-		local fbCreateRow, fbCreateLbl = MakePopupRow("Criar botão flutuante", 28)
-		fbCreateLbl.TextColor3 = Color3.fromRGB(220, 220, 220)
-		fbCreateLbl.TextSize = 10
-		fbCreateLbl.TextTransparency = 0.10
+		-- Criar/Remover row
+		local fbToggleRow, fbToggleLbl = MakeRow("Criar botão flutuante", 26)
+		fbToggleLbl.TextColor3 = Color3.fromRGB(210, 210, 210)
+		fbToggleLbl.TextTransparency = 0.25
+		fbToggleLbl.TextSize = 10
 
-		local fbActiveIndicator = Instance.new("Frame")
-		fbActiveIndicator.Name = NeverLose.RandomString()
-		fbActiveIndicator.Parent = fbCreateRow
-		fbActiveIndicator.AnchorPoint = Vector2.new(1, 0.5)
-		fbActiveIndicator.Position = UDim2.new(1, -10, 0.5, 0)
-		fbActiveIndicator.Size = UDim2.new(0, 8, 0, 8)
-		fbActiveIndicator.BackgroundColor3 = Color3.fromRGB(78, 127, 252)
-		fbActiveIndicator.BackgroundTransparency = 1
-		fbActiveIndicator.BorderSizePixel = 0
-		fbActiveIndicator.ZIndex = LayerIndex + 32
-		local fbActiveCorner = Instance.new("UICorner")
-		fbActiveCorner.CornerRadius = UDim.new(1, 0)
-		fbActiveCorner.Parent = fbActiveIndicator
+		local fbDotIndicator = Instance.new("Frame")
+		fbDotIndicator.Name = NeverLose.RandomString()
+		fbDotIndicator.Parent = fbToggleRow
+		fbDotIndicator.AnchorPoint = Vector2.new(1, 0.5)
+		fbDotIndicator.Position = UDim2.new(1, -10, 0.5, 0)
+		fbDotIndicator.Size = UDim2.new(0, 6, 0, 6)
+		fbDotIndicator.BackgroundColor3 = NeverLose.AccentColor
+		fbDotIndicator.BackgroundTransparency = 1
+		fbDotIndicator.BorderSizePixel = 0
+		fbDotIndicator.ZIndex = LayerIndex + 32
+		local fbDotC = Instance.new("UICorner")
+		fbDotC.CornerRadius = UDim.new(1, 0)
+		fbDotC.Parent = fbDotIndicator
 
 		-- bottom padding
-		local bottomPad = Instance.new("Frame")
-		bottomPad.Name = NeverLose.RandomString()
-		bottomPad.Parent = PopupFrame
-		bottomPad.BackgroundTransparency = 1
-		bottomPad.BorderSizePixel = 0
-		bottomPad.Size = UDim2.new(1, 0, 0, 4)
-		bottomPad.ZIndex = LayerIndex + 31
+		local botPad = Instance.new("Frame")
+		botPad.Name = NeverLose.RandomString()
+		botPad.Parent = PopupFrame
+		botPad.BackgroundTransparency = 1
+		botPad.BorderSizePixel = 0
+		botPad.Size = UDim2.new(1, 0, 0, 4)
+		botPad.ZIndex = LayerIndex + 31
 
-		-- create/destroy the floating button
 		local function CreateFloatingButton()
 			if FloatBtn and FloatBtn.Instance then
 				FloatBtn.Instance:Destroy()
 				FloatBtn = nil
-				NeverLose.PlayAnimate(fbActiveIndicator, SlowyTween, { BackgroundTransparency = 1 })
-				fbCreateLbl.Text = "Criar botão flutuante"
+				NeverLose.PlayAnimate(fbDotIndicator, SlowyTween, { BackgroundTransparency = 1 })
+				fbToggleLbl.Text = "Criar botão flutuante"
 				return
 			end
 
@@ -4099,7 +4014,8 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 			fbInst.AnchorPoint = Vector2.new(0.5, 0.5)
 			fbInst.Position = UDim2.new(0.5, 0, 0.85, 0)
 			fbInst.Size = UDim2.new(0, fbSizeValue, 0, fbSizeValue)
-			fbInst.BackgroundColor3 = fbColorValue
+			fbInst.BackgroundColor3 = Color3.fromRGB(18, 20, 26)
+			fbInst.BackgroundTransparency = 0.18
 			fbInst.BorderSizePixel = 0
 			fbInst.ZIndex = 100
 			fbInst.Text = ""
@@ -4108,65 +4024,71 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 			fbc.CornerRadius = UDim.new(1, 0)
 			fbc.Parent = fbInst
 			local fbStroke = Instance.new("UIStroke")
-			fbStroke.Color = Color3.fromRGB(255, 255, 255)
-			fbStroke.Transparency = 0.75
+			fbStroke.Color = NeverLose.AccentColor
+			fbStroke.Transparency = 0.50
 			fbStroke.Parent = fbInst
-			-- icon label inside
-			local fbIconLbl = Instance.new("TextLabel")
-			fbIconLbl.Parent = fbInst
-			fbIconLbl.AnchorPoint = Vector2.new(0.5, 0.5)
-			fbIconLbl.Position = UDim2.new(0.5, 0, 0.5, 0)
-			fbIconLbl.Size = UDim2.new(0.7, 0, 0.7, 0)
-			fbIconLbl.BackgroundTransparency = 1
-			fbIconLbl.BorderSizePixel = 0
-			fbIconLbl.ZIndex = 101
-			fbIconLbl.FontFace = NeverLose.BuiltInBold
-			fbIconLbl.Text = Config.Icon or "chevron-large-left"
-			fbIconLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-			fbIconLbl.TextTransparency = 0.10
-			fbIconLbl.TextScaled = true
 
-			-- drag support
+			-- Button name label
+			local fbNameLbl = Instance.new("TextLabel")
+			fbNameLbl.Parent = fbInst
+			fbNameLbl.AnchorPoint = Vector2.new(0.5, 0.5)
+			fbNameLbl.Position = UDim2.new(0.5, 0, 0.5, 0)
+			fbNameLbl.Size = UDim2.new(0.88, 0, 0.88, 0)
+			fbNameLbl.BackgroundTransparency = 1
+			fbNameLbl.BorderSizePixel = 0
+			fbNameLbl.ZIndex = 101
+			fbNameLbl.Font = Enum.Font.GothamMedium
+			fbNameLbl.Text = Config.Name
+			fbNameLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+			fbNameLbl.TextTransparency = 0.15
+			fbNameLbl.TextScaled = true
+			fbNameLbl.TextWrapped = true
+
 			NeverLose.Drag(fbInst, fbInst, 0.15)
 
-			-- click fires the button callback
 			NeverLose:AddSignal(fbInst.MouseButton1Click:Connect(LPH_NO_VIRTUALIZE(function()
-				NeverLose.PlayAnimate(fbInst, TweenInfo.new(0.08), { Size = UDim2.new(0, fbSizeValue - 6, 0, fbSizeValue - 6) })
-				task.delay(0.12, function()
-					NeverLose.PlayAnimate(fbInst, TweenInfo.new(0.1), { Size = UDim2.new(0, fbSizeValue, 0, fbSizeValue) })
+				NeverLose.PlayAnimate(fbInst, TweenInfo.new(0.07), {
+					Size = UDim2.new(0, fbSizeValue - 5, 0, fbSizeValue - 5),
+					BackgroundTransparency = 0.05,
+				})
+				task.delay(0.10, function()
+					NeverLose.PlayAnimate(fbInst, TweenInfo.new(0.10), {
+						Size = UDim2.new(0, fbSizeValue, 0, fbSizeValue),
+						BackgroundTransparency = 0.18,
+					})
 				end)
 				Config.Callback()
 			end)))
 
 			NeverLose:AddSignal(fbInst.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
-				NeverLose.PlayAnimate(fbInst, SlowyTween, { BackgroundTransparency = 0.20 })
+				NeverLose.PlayAnimate(fbInst, SlowyTween, { BackgroundTransparency = 0.05 })
 			end)))
 			NeverLose:AddSignal(fbInst.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
-				NeverLose.PlayAnimate(fbInst, SlowyTween, { BackgroundTransparency = 0 })
+				NeverLose.PlayAnimate(fbInst, SlowyTween, { BackgroundTransparency = 0.18 })
 			end)))
 
 			FloatBtn = { Instance = fbInst }
-			NeverLose.PlayAnimate(fbActiveIndicator, SlowyTween, { BackgroundTransparency = 0 })
-			fbCreateLbl.Text = "Remover botão flutuante"
+			NeverLose.PlayAnimate(fbDotIndicator, SlowyTween, { BackgroundTransparency = 0 })
+			fbToggleLbl.Text = "Remover botão flutuante"
 		end
 
-		NeverLose:CreateInput(fbCreateRow, LPH_NO_VIRTUALIZE(CreateFloatingButton))
-		NeverLose:AddSignal(fbCreateRow.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
-			NeverLose.PlayAnimate(fbCreateRow, SlowyTween, { BackgroundTransparency = 0.25 })
+		NeverLose:CreateInput(fbToggleRow, LPH_NO_VIRTUALIZE(CreateFloatingButton))
+		NeverLose:AddSignal(fbToggleRow.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
+			NeverLose.PlayAnimate(fbToggleRow, SlowyTween, { BackgroundTransparency = 0.20 })
+			NeverLose.PlayAnimate(fbToggleLbl, SlowyTween, { TextTransparency = 0.10 })
 		end)))
-		NeverLose:AddSignal(fbCreateRow.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
-			NeverLose.PlayAnimate(fbCreateRow, SlowyTween, { BackgroundTransparency = 1 })
+		NeverLose:AddSignal(fbToggleRow.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
+			NeverLose.PlayAnimate(fbToggleRow, SlowyTween, { BackgroundTransparency = 1 })
+			NeverLose.PlayAnimate(fbToggleLbl, SlowyTween, { TextTransparency = 0.25 })
 		end)))
 
-		-- ── Open/close popup ──────────────────────────────────────────────────
+		-- ── Open / Close ──────────────────────────────────────────────────────
 		local function ClosePopup()
 			PopupOpen = false
 			NeverLose.PlayAnimate(PopupFrame, SlowyTween, { BackgroundTransparency = 1 })
 			NeverLose.PlayAnimate(PopupStroke, SlowyTween, { Transparency = 1 })
-			task.delay(0.2, function()
-				if not PopupOpen then
-					PopupFrame.Visible = false
-				end
+			task.delay(0.20, function()
+				if not PopupOpen then PopupFrame.Visible = false end
 			end)
 		end
 
@@ -4176,26 +4098,21 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 			PopupFrame.Visible = true
 			PopupFrame.BackgroundTransparency = 1
 			ResizePopup()
-			NeverLose.PlayAnimate(PopupFrame, SlowyTween, { BackgroundTransparency = 0.035 })
-			NeverLose.PlayAnimate(PopupStroke, SlowyTween, { Transparency = 0.65 })
+			NeverLose.PlayAnimate(PopupFrame, SlowyTween, { BackgroundTransparency = 0.12 })
+			NeverLose.PlayAnimate(PopupStroke, SlowyTween, { Transparency = 0.60 })
 		end
 
 		NeverLose:CreateInput(MiniTrigger, LPH_NO_VIRTUALIZE(function()
-			if PopupOpen then
-				ClosePopup()
-			else
-				OpenPopup()
-			end
+			if PopupOpen then ClosePopup() else OpenPopup() end
 		end))
 
 		NeverLose:AddSignal(MiniTrigger.MouseEnter:Connect(LPH_NO_VIRTUALIZE(function()
-			NeverLose.PlayAnimate(MiniTrigger, SlowyTween, { BackgroundTransparency = 0.05 })
+			NeverLose.PlayAnimate(MiniTrigger, SlowyTween, { TextTransparency = 0.20 })
 		end)))
 		NeverLose:AddSignal(MiniTrigger.MouseLeave:Connect(LPH_NO_VIRTUALIZE(function()
-			NeverLose.PlayAnimate(MiniTrigger, SlowyTween, { BackgroundTransparency = 0.35 })
+			NeverLose.PlayAnimate(MiniTrigger, SlowyTween, { TextTransparency = 0.60 })
 		end)))
 
-		-- close popup when clicking outside
 		NeverLose:AddSignal(UserInputService.InputBegan:Connect(LPH_NO_VIRTUALIZE(function(inp)
 			if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
 				if PopupOpen and not NeverLose:IsMouseOverFrame(PopupFrame) and not NeverLose:IsMouseOverFrame(MiniTrigger) then
