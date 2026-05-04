@@ -2,7 +2,7 @@
                           Neverlose.cc UI Library
     Author: 4lpaca
 	License: MIT
-    Discord: https://arceney.win/discord
+    Discord: httpsdiscord
     Other-Projects: https://4lpaca.win
 ]]
 
@@ -3588,7 +3588,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		BasedLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		BasedLabel.BorderSizePixel = 0
 		BasedLabel.Position = UDim2.new(0, 35, 0, 6)
-		BasedLabel.Size = UDim2.new(0,1, 0, 15)
+		BasedLabel.Size = UDim2.new(1, -58, 0, 15)
 		BasedLabel.ZIndex = LayerIndex + 9
 		BasedLabel.Font = Enum.Font.GothamMedium
 		BasedLabel.Text = Config.Name;
@@ -3662,7 +3662,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		MiniTrigger.BorderSizePixel = 0
 		MiniTrigger.ZIndex = LayerIndex + 12
 		MiniTrigger.FontFace = NeverLose.BuiltInBold
-		MiniTrigger.Text = "dots-vertical"
+		MiniTrigger.Text = "three-dots-vertical"
 		MiniTrigger.TextColor3 = Color3.fromRGB(255, 255, 255)
 		MiniTrigger.TextTransparency = 0.60
 		MiniTrigger.TextSize = 11
@@ -3827,6 +3827,7 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 		Button.KeybindValue = nil
 
 		local kbIsBinding = false
+		local kbConnection = nil
 		local function UpdateKbBadge(v)
 			local txt = v and NeverLose:KeyCodeToStr(v) or "None"
 			kbBadgeLbl.Text = txt
@@ -3853,7 +3854,8 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 			local KeyName = typeof(Selected) == "string" and Selected or Selected.Name
 			Button.KeybindValue = KeyName
 			UpdateKbBadge(KeyName)
-			NeverLose:AddSignal(UserInputService.InputBegan:Connect(LPH_NO_VIRTUALIZE(function(inp, gp)
+			if kbConnection then kbConnection:Disconnect() end
+			kbConnection = NeverLose:AddSignal(UserInputService.InputBegan:Connect(LPH_NO_VIRTUALIZE(function(inp, gp)
 				if gp then return end
 				if typeof(Button.KeybindValue) == "string" then
 					if inp.KeyCode.Name == Button.KeybindValue or inp.UserInputType.Name == Button.KeybindValue then
@@ -4097,7 +4099,9 @@ function NeverLose:RegisiterItem(Frame: Frame , Signel)
 			RepositionPopup()
 			PopupFrame.Visible = true
 			PopupFrame.BackgroundTransparency = 1
-			ResizePopup()
+			task.defer(function()
+				if PopupOpen then ResizePopup() end
+			end)
 			NeverLose.PlayAnimate(PopupFrame, SlowyTween, { BackgroundTransparency = 0.12 })
 			NeverLose.PlayAnimate(PopupStroke, SlowyTween, { Transparency = 0.60 })
 		end
